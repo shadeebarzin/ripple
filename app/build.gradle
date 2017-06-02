@@ -42,4 +42,9 @@ dependencies {
     // This library handles music playback
     compile 'com.spotify.sdk:spotify-player:1.0.0-beta12@aar'
     testCompile 'junit:junit:4.12'
+
+    compile 'com.google.firebase:firebase-database:10.2.6'
 }
+
+// for Firebase
+apply plugin: 'com.google.gms.google-services'

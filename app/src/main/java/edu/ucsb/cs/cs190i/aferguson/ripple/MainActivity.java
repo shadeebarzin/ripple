@@ -1,13 +1,10 @@
 package edu.ucsb.cs.cs190i.aferguson.ripple;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -20,13 +17,6 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Album;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
 public class MainActivity extends AppCompatActivity implements ConnectionStateCallback, PlayerNotificationCallback {
 
     //Client ID for individual user (must fetch from spotify)
@@ -37,6 +27,15 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
 
     private Player mPlayer;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.login_page);
+
+        // TODO TESTING NEED TO REMOVE
+        FirebaseHelper.Initialize();
+        FirebaseHelper.GetInstance().addNewUser("af123", "andrew", "andrew_photo");
+    }
 
     public void spotifyLoginClicked(View V){
         final AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
@@ -48,15 +47,8 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.login_page);
-    }
-
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-
 
         Log.d("MainActivity", "onActivityResult");
         // Check if result comes from the correct activity
@@ -74,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
                             mPlayer.addConnectionStateCallback(MainActivity.this);
                             mPlayer.addPlayerNotificationCallback(MainActivity.this);
                             mPlayer.play("spotify:track:5bgYTzUDzerRFN7fp86MkQ");
+
+                            // init db on successful login
+                            FirebaseHelper.Initialize();
                         }
 
                         @Override

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "967413318512",
+    "firebase_url": "https://cs190i-ripple.firebaseio.com",
+    "project_id": "cs190i-ripple",
+    "storage_bucket": "cs190i-ripple.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967413318512:android:f85e245f0ce3fcae",
+        "android_client_info": {
+          "package_name": "edu.ucsb.cs.cs190i.aferguson.ripple"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "967413318512-pe4nosh170c8h3m4vss017ajaoo5ktj2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.ucsb.cs.cs190i.aferguson.ripple",
+            "certificate_hash": "ae6376ba436a1d8e4cc7cc1831e070f97033c9d4"
+          }
+        },
+        {
+          "client_id": "967413318512-fh769pnqnhj5e46bdlols1a4lv8d0gfd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1Zcq0CPxnM2hFKWSu1mjEgez6ibXsBK4"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "967413318512-fh769pnqnhj5e46bdlols1a4lv8d0gfd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
