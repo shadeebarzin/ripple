@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -16,6 +17,13 @@ import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Album;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity implements ConnectionStateCallback, PlayerNotificationCallback {
 
@@ -60,15 +68,40 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
                 // Response was successful and contains auth token
                 case TOKEN:
                     Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
+
+                    //WEB API CODE
+                    SpotifyApi api = new SpotifyApi();
+
+// Most (but not all) of the Spotify Web API endpoints require authorisation.
+// If you know you'll only use the ones that don't require authorisation you can skip this step
+                    api.setAccessToken(response.getAccessToken());
+
+                    SpotifyService spotify = api.getService();
+
+                    spotify.getAlbum("2dIGnmEIy1WZIcZCFSj6i8", new Callback<Album>() {
+                        @Override
+                        public void success(Album album, Response response) {
+                            Log.d("Album success", album.name);
+                            Toast.makeText(MainActivity.this, album.name, Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Log.d("Album failure", error.toString());
+                        }
+                    });
+
+                    //SPOTIFY PLAYER CODE
                     mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
+                        //Initialize Spotify Player
                         @Override
                         public void onInitialized(Player player) {
                             mPlayer.addConnectionStateCallback(MainActivity.this);
                             mPlayer.addPlayerNotificationCallback(MainActivity.this);
-                            mPlayer.play("spotify:track:5bgYTzUDzerRFN7fp86MkQ");
+                            //mPlayer.play("spotify:track:5bgYTzUDzerRFN7fp86MkQ");
 
                             // init db on successful login
-                            FirebaseHelper.Initialize();
+                            //FirebaseHelper.Initialize();
                         }
 
                         @Override
@@ -118,13 +151,13 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
     @Override
     public void onLoggedIn() {
         Log.d("MainActivity", "User logged in");
-        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
     }
 
     @Override
     public void onLoggedOut() {
         Log.d("MainActivity", "User logged out");
-        //setContentView(R.layout.login_page);
+        setContentView(R.layout.login_page);
     }
 
     @Override
@@ -147,4 +180,5 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
         Spotify.destroyPlayer(this);
         super.onDestroy();
     }
+
 }
