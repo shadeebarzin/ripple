@@ -100,19 +100,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
 
                     spotify = api.getService();
 
-
-//                    RestAdapter restAdapter = new RestAdapter.Builder()
-//                            .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
-//                            .setRequestInterceptor(new RequestInterceptor() {
-//                                @Override
-//                                public void intercept(RequestFacade request) {
-//                                    request.addHeader("Authorization", "Bearer " + accessToken);
-//                                }
-//                            })
-//                            .build();
-//
-//                    SpotifyService spotify = restAdapter.create(SpotifyService.class);
-
                     spotify.getCurrentTrack(new Callback<CurrentlyPlaying>(){
                         @Override
                         public void success(CurrentlyPlaying currentTrack, Response response) {
