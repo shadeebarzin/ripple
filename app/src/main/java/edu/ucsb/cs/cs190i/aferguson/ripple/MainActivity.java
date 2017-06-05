@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.CurrentlyPlaying;
 import kaaes.spotify.webapi.android.models.Track;
 import retrofit.Callback;
 import retrofit.RequestInterceptor;
@@ -93,32 +94,34 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
                     Config playerConfig = new Config(this, accessToken, CLIENT_ID);
 
                     //WEB API CODE
-                    //aferguson uri: spotify:user:1255003849xxx
-//                    SpotifyApi api = new SpotifyApi();
-//                    api.setAccessToken(accessToken);
+//                    aferguson uri: spotify:user:1255003849xxx
+                    SpotifyApi api = new SpotifyApi();
+                    api.setAccessToken(accessToken);
+
+                    spotify = api.getService();
+
+
+//                    RestAdapter restAdapter = new RestAdapter.Builder()
+//                            .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
+//                            .setRequestInterceptor(new RequestInterceptor() {
+//                                @Override
+//                                public void intercept(RequestFacade request) {
+//                                    request.addHeader("Authorization", "Bearer " + accessToken);
+//                                }
+//                            })
+//                            .build();
 //
-//                    spotify = api.getService();
+//                    SpotifyService spotify = restAdapter.create(SpotifyService.class);
 
-
-                    RestAdapter restAdapter = new RestAdapter.Builder()
-                            .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
-                            .setRequestInterceptor(new RequestInterceptor() {
-                                @Override
-                                public void intercept(RequestFacade request) {
-                                    request.addHeader("Authorization", "Bearer " + accessToken);
-                                }
-                            })
-                            .build();
-
-                    SpotifyService spotify = restAdapter.create(SpotifyService.class);
-
-                    spotify.getCurrentTrack(new Callback<Track>(){
+                    spotify.getCurrentTrack(new Callback<CurrentlyPlaying>(){
                         @Override
-                        public void success(Track track, Response response) {
-                            if(track !=null) {
+                        public void success(CurrentlyPlaying currentTrack, Response response) {
+                            if(currentTrack !=null) {
                                 Log.d("restapi", "SUCCESS");
-                                if (track.name != null)
-                                    Log.d("restapi", track.name);
+                                if (currentTrack != null) {
+                                    Log.d("restapi", "timestamp: " + currentTrack.timestamp);
+                                    Log.d("restapi", "progress_ms: " + currentTrack.progress_ms);
+                                }
                             }
                             else
                                 Log.d("restapi", "FAILURE");

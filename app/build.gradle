@@ -35,7 +35,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     //Web API Wrapper
-//    compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
+    //    compile 'com.github.kaaes:spotify-web-api-android:0.4.1'
     // This library handles authentication and authorization
     compile 'com.spotify.sdk:spotify-auth:1.0.0-beta12@aar'
     // This library handles music playback
