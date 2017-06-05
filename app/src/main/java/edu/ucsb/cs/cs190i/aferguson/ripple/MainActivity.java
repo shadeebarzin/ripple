@@ -16,14 +16,30 @@ import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
+import com.spotify.sdk.android.player.PlayerStateCallback;
 import com.spotify.sdk.android.player.Spotify;
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Album;
+import kaaes.spotify.webapi.android.models.Track;
 import retrofit.Callback;
+import retrofit.RequestInterceptor;
+import retrofit.RestAdapter;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.converter.GsonConverter;
+import retrofit.mime.TypedByteArray;
+//import retrofit.Callback;
+//import retrofit.RequestInterceptor;
+//import retrofit.RestAdapter;
+//import retrofit.RetrofitError;
+//import retrofit.client.Response;
 
 public class MainActivity extends AppCompatActivity implements ConnectionStateCallback, PlayerNotificationCallback {
 
@@ -34,11 +50,16 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
     private static final int REQUEST_CODE = 1337;
 
     private Player mPlayer;
+    private SpotifyService spotify;
+
+    private String accessToken;
+    public static final String SPOTIFY_WEB_API_ENDPOINT = "https://api.spotify.com/v1";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
+
 
         // TODO TESTING NEED TO REMOVE
         FirebaseHelper.Initialize();
@@ -48,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
     public void spotifyLoginClicked(View V){
         final AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
-        builder.setScopes(new String[]{"user-read-private", "streaming"});
+        builder.setScopes(new String[]{"user-read-private", "user-read-currently-playing","streaming", "user-read-playback-state"});
         AuthenticationRequest request = builder.build();
 
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
@@ -64,32 +85,84 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             Log.d("MainActivity", "authResponse:" + response.toString());
 
+
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
+                    accessToken = response.getAccessToken();
+                    Config playerConfig = new Config(this, accessToken, CLIENT_ID);
 
                     //WEB API CODE
-                    SpotifyApi api = new SpotifyApi();
+                    //aferguson uri: spotify:user:1255003849xxx
+//                    SpotifyApi api = new SpotifyApi();
+//                    api.setAccessToken(accessToken);
+//
+//                    spotify = api.getService();
 
-// Most (but not all) of the Spotify Web API endpoints require authorisation.
-// If you know you'll only use the ones that don't require authorisation you can skip this step
-                    api.setAccessToken(response.getAccessToken());
 
-                    SpotifyService spotify = api.getService();
+                    RestAdapter restAdapter = new RestAdapter.Builder()
+                            .setEndpoint(SpotifyApi.SPOTIFY_WEB_API_ENDPOINT)
+                            .setRequestInterceptor(new RequestInterceptor() {
+                                @Override
+                                public void intercept(RequestFacade request) {
+                                    request.addHeader("Authorization", "Bearer " + accessToken);
+                                }
+                            })
+                            .build();
 
-                    spotify.getAlbum("2dIGnmEIy1WZIcZCFSj6i8", new Callback<Album>() {
+                    SpotifyService spotify = restAdapter.create(SpotifyService.class);
+
+                    spotify.getCurrentTrack(new Callback<Track>(){
                         @Override
-                        public void success(Album album, Response response) {
-                            Log.d("Album success", album.name);
-                            Toast.makeText(MainActivity.this, album.name, Toast.LENGTH_SHORT).show();
+                        public void success(Track track, Response response) {
+                            if(track !=null) {
+                                Log.d("restapi", "SUCCESS");
+                                if (track.name != null)
+                                    Log.d("restapi", track.name);
+                            }
+                            else
+                                Log.d("restapi", "FAILURE");
+//                            Toast.makeText(MainActivity.this, track.uri, Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
                         public void failure(RetrofitError error) {
-                            Log.d("Album failure", error.toString());
+                            Log.d("Track failure", error.toString());
                         }
                     });
+
+
+
+//                    spotify.getAlbum("2dIGnmEIy1WZIcZCFSj6i8", new Callback<Album>() {
+//                        @Override
+//                        public void success(Album album, Response response) {
+//                            Log.d("Album success", album.name);
+//                            Toast.makeText(MainActivity.this, album.name, Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                        @Override
+//                        public void failure(RetrofitError error) {
+//                            Log.d("Album failure", error.toString());
+//                        }
+//                    });
+
+
+
+                    //METHOD2
+
+//                    final String accessToken = "myAccessToken";
+//
+//                    RestAdapter restAdapter = new RestAdapter.Builder()
+//                            .setEndpoint(SPOTIFY_WEB_API_ENDPOINT + "/me/player/currently-playing")
+//                            .setRequestInterceptor(new RequestInterceptor() {
+//                                @Override
+//                                public void intercept(RequestFacade request) {
+//                                    request.addHeader("Authorization", "Bearer " + accessToken);
+//                                }
+//                            })
+//                            .build();
+//
+//                    SpotifyService spotify = restAdapter.create(SpotifyService.class);
 
                     //SPOTIFY PLAYER CODE
                     mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
@@ -179,6 +252,16 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
     protected void onDestroy() {
         Spotify.destroyPlayer(this);
         super.onDestroy();
+    }
+
+    public void getPlayerCurrentTrackAndTime(){
+        mPlayer.getPlayerState(new PlayerStateCallback() {
+            @Override
+            public void onPlayerState(PlayerState playerState) {
+                String currentTrackUri = playerState.trackUri;
+                int currentPosition = playerState.positionInMs;
+            }
+        });
     }
 
 }
