@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
+import com.google.firebase.database.FirebaseDatabase;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -17,6 +18,9 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.Spotify;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity implements ConnectionStateCallback, PlayerNotificationCallback {
 
     //Client ID for individual user (must fetch from spotify)
@@ -26,15 +30,28 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
     private static final int REQUEST_CODE = 1337;
 
     private Player mPlayer;
+    private List<User> users = new ArrayList<>();
+    private List<Broadcast> broadcasts = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_page);
 
+        Log.d("onCreate", "initing DB");
         // TODO TESTING NEED TO REMOVE
         FirebaseHelper.Initialize();
-        FirebaseHelper.GetInstance().addNewUser("af123", "andrew", "andrew_photo");
+        FirebaseHelper.GetInstance().getUsers(users);
+        FirebaseHelper.GetInstance().getBroadcasts(broadcasts);
+
+
+//        FirebaseHelper.GetInstance().addUser(new User("sb123", "shadee", "shadee_photo"));
+//        FirebaseHelper.GetInstance().addUser(new User("af123", "andrew", "andrew_photo"));
+//        FirebaseHelper.GetInstance().addUser(new User("pw123", "peter", "peter_photo"));
+
+//        FirebaseHelper.GetInstance().addBroadcast("af123");
+//        FirebaseHelper.GetInstance().addListener("sb123", "pw123");
+
     }
 
     public void spotifyLoginClicked(View V){
