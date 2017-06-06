@@ -95,39 +95,39 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
 
                     //WEB API CODE
 //                    aferguson uri: spotify:user:1255003849xxx
-                    SpotifyApi api = new SpotifyApi();
-                    api.setAccessToken(accessToken);
-
-                    spotify = api.getService();
-
-                    spotify.getCurrentTrack(new Callback<CurrentlyPlaying>(){
-                        @Override
-                        public void success(CurrentlyPlaying currentlyPlaying, Response response) {
-                            if(currentlyPlaying !=null) {
-                                Log.d("restapi", "SUCCESS");
-                                if (currentlyPlaying != null) {
-                                    Log.d("restapi", "timestamp: " + currentlyPlaying.timestamp);
-                                    Log.d("restapi", "progress_ms: " + currentlyPlaying.progress_ms);
-                                    if(currentlyPlaying.item!=null)
-                                        Log.d("restapi", "curTrack: " + currentlyPlaying.item.name);
-                                    if(currentlyPlaying.is_playing)
-                                        Log.d("restapi", "Playing!");
-//                                    Log.d("restapi", "current_track_name: " + currentlyPlaying.current_track.toString());
-//                                    Track curTrack = currentlyPlaying.current_track;
-//                                    if(curTrack.name!=null)
-//                                        Log.d("restapi", "curtrack_name: " + curTrack.name);
-                                }
-                            }
-                            else
-                                Log.d("restapi", "FAILURE");
-//                            Toast.makeText(MainActivity.this, track.uri, Toast.LENGTH_SHORT).show();
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            Log.d("Track failure", error.toString());
-                        }
-                    });
+//                    SpotifyApi api = new SpotifyApi();
+//                    api.setAccessToken(accessToken);
+//
+//                    spotify = api.getService();
+//
+//                    spotify.getCurrentTrack(new Callback<CurrentlyPlaying>(){
+//                        @Override
+//                        public void success(CurrentlyPlaying currentlyPlaying, Response response) {
+//                            if(currentlyPlaying !=null) {
+//                                Log.d("restapi", "SUCCESS");
+//                                if (currentlyPlaying != null) {
+//                                    Log.d("restapi", "timestamp: " + currentlyPlaying.timestamp);
+//                                    Log.d("restapi", "progress_ms: " + currentlyPlaying.progress_ms);
+//                                    if(currentlyPlaying.item!=null)
+//                                        Log.d("restapi", "curTrack: " + currentlyPlaying.item.name);
+//                                    if(currentlyPlaying.is_playing)
+//                                        Log.d("restapi", "Playing!");
+////                                    Log.d("restapi", "current_track_name: " + currentlyPlaying.current_track.toString());
+////                                    Track curTrack = currentlyPlaying.current_track;
+////                                    if(curTrack.name!=null)
+////                                        Log.d("restapi", "curtrack_name: " + curTrack.name);
+//                                }
+//                            }
+//                            else
+//                                Log.d("restapi", "FAILURE");
+////                            Toast.makeText(MainActivity.this, track.uri, Toast.LENGTH_SHORT).show();
+//                        }
+//
+//                        @Override
+//                        public void failure(RetrofitError error) {
+//                            Log.d("Track failure", error.toString());
+//                        }
+//                    });
 
 
 
@@ -145,23 +145,6 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
 //                    });
 
 
-
-                    //METHOD2
-
-//                    final String accessToken = "myAccessToken";
-//
-//                    RestAdapter restAdapter = new RestAdapter.Builder()
-//                            .setEndpoint(SPOTIFY_WEB_API_ENDPOINT + "/me/player/currently-playing")
-//                            .setRequestInterceptor(new RequestInterceptor() {
-//                                @Override
-//                                public void intercept(RequestFacade request) {
-//                                    request.addHeader("Authorization", "Bearer " + accessToken);
-//                                }
-//                            })
-//                            .build();
-//
-//                    SpotifyService spotify = restAdapter.create(SpotifyService.class);
-
                     //SPOTIFY PLAYER CODE
                     mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                         //Initialize Spotify Player
@@ -173,6 +156,7 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
 
                             // init db on successful login
                             //FirebaseHelper.Initialize();
+
                         }
 
                         @Override
