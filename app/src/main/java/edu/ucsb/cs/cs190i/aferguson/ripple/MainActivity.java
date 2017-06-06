@@ -102,12 +102,20 @@ public class MainActivity extends AppCompatActivity implements ConnectionStateCa
 
                     spotify.getCurrentTrack(new Callback<CurrentlyPlaying>(){
                         @Override
-                        public void success(CurrentlyPlaying currentTrack, Response response) {
-                            if(currentTrack !=null) {
+                        public void success(CurrentlyPlaying currentlyPlaying, Response response) {
+                            if(currentlyPlaying !=null) {
                                 Log.d("restapi", "SUCCESS");
-                                if (currentTrack != null) {
-                                    Log.d("restapi", "timestamp: " + currentTrack.timestamp);
-                                    Log.d("restapi", "progress_ms: " + currentTrack.progress_ms);
+                                if (currentlyPlaying != null) {
+                                    Log.d("restapi", "timestamp: " + currentlyPlaying.timestamp);
+                                    Log.d("restapi", "progress_ms: " + currentlyPlaying.progress_ms);
+                                    if(currentlyPlaying.item!=null)
+                                        Log.d("restapi", "curTrack: " + currentlyPlaying.item.name);
+                                    if(currentlyPlaying.is_playing)
+                                        Log.d("restapi", "Playing!");
+//                                    Log.d("restapi", "current_track_name: " + currentlyPlaying.current_track.toString());
+//                                    Track curTrack = currentlyPlaying.current_track;
+//                                    if(curTrack.name!=null)
+//                                        Log.d("restapi", "curtrack_name: " + curTrack.name);
                                 }
                             }
                             else
